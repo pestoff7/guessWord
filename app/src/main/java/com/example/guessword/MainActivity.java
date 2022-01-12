@@ -4,58 +4,50 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    char[] lettersArray = "абвгдежзийклмнопрстуфхцчшщъыьэюя".toCharArray();
+    String guessesWord = "словосекретное";
+    String encryptionWord = guessesWord.replaceAll("[а-я]","*");
+    String s = "";
+    TextView t;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String guessesWord = "вратарь";
-        String encryptionWord = guessesWord.replaceAll("[а-я]", "*");
-        StringBuilder guessesWordString = new StringBuilder(guessesWord);
-        StringBuilder encryptionWordString = new StringBuilder(encryptionWord);
-        TextView t = new TextView(this);
-        char[] chrArr = guessesWord.toCharArray();
         final View.OnClickListener onClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Button t1 = (Button) view;
                 String textBtn = String.valueOf(t1.getText());
-                for (int i = 0; i < chrArr.length; i++) {
-                    char c = chrArr[i];
-                    String c2 = c + "";
-                    if (c2.equals(textBtn)){
-                        int letterIndex = guessesWord.indexOf(c2);
-                        encryptionWordString.setCharAt(letterIndex, c);
-                        t.setText(encryptionWordString);
-                    }
+                if (guessesWord.contains(textBtn)) {
+                    s += textBtn;
+                    String regex = "[" + "^" + s + "]";
+                    String s1 = guessesWord.replaceAll(regex, "*");
+                    t1.setEnabled(false);
+                    t.setText(s1);
                 }
             }
         };
         super.onCreate(savedInstanceState);
-        LinearLayout linLayout = new LinearLayout(this);
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
         GridLayout gridLayout = new GridLayout(this);
-        gridLayout.setColumnCount(4);
-        gridLayout.setRowCount(9);
-        linLayout.addView(t);
-        linLayout.addView(gridLayout);
-        linLayout.setOrientation(LinearLayout.VERTICAL);
-        ViewGroup.LayoutParams linLayoutParam = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        t = new TextView(this);
         t.setTextSize(25);
-        int idBut = 1;
-        char[] letterArray = "абвгдежзийклмнопрстуфхцчшщъыьэюя".toCharArray();
         t.setText(encryptionWord);
-        for (int i = 0; i < letterArray.length; i++){
-            Button but = new Button(this);
-            but.setText(letterArray[i] + "");
-            but.setId(idBut);
-            but.setOnClickListener(onClick);
-            idBut++;
-            gridLayout.addView(but, i);
+        linearLayout.addView(t);
+        gridLayout.setRowCount(8);
+        gridLayout.setColumnCount(4);
+        linearLayout.addView(gridLayout);
+        for (int i = 0; i < lettersArray.length; i++) {
+            Button btn = new Button(this);
+            btn.setText(lettersArray[i] + "");
+            btn.setOnClickListener(onClick);
+            gridLayout.addView(btn, i);
         }
-        setContentView(linLayout, linLayoutParam);
+        setContentView(linearLayout);
     }
 }
